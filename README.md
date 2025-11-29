@@ -17,6 +17,27 @@ n3_ciencia/
     └── malicious_phish.csv         # Dataset
 ```
 
+## 📥 Download do Dataset (Obrigatório)
+
+Para treinar o modelo ou recriar o pipeline de ML, é necessário baixar o dataset de URLs maliciosas:
+
+- Dataset: **Malicious URLs Dataset**
+- Link: https://www.kaggle.com/datasets/sid321axn/malicious-urls-dataset/data
+
+### Passos:
+
+1. Acesse o link do dataset no Kaggle.
+2. Faça login (ou crie uma conta).
+3. Baixe o arquivo `.csv` (ex.: `malicious_phish.csv`).
+4. Extraia / mova o arquivo `.csv` para dentro da pasta `train` do projeto:
+
+   ```bash
+   n3_ciencia/
+   └── train/
+       └── malicious_phish.csv
+   
+Certifique-se de que o nome do arquivo no diretório train seja o mesmo esperado pelos scripts (por padrão, malicious_phish.csv).
+
 ## 🚀 Como Usar
 
 ### 1. Criar e Ativar Ambiente Virtual (venv)
@@ -189,4 +210,3 @@ deactivate
 
 ---
 
-Desenvolvido com ❤️ usando Python, FastAPI, XGBoost e Streamlit
