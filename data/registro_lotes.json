@@ -1,0 +1,19 @@
+{
+  "versao_formato": 1,
+  "fonte_proxima_posicao": 30000,
+  "lotes": [
+    {
+      "arquivo": "data/raw/lote_0001.csv",
+      "sha256": "8ac2625089e2c25cb4c47471bd5b63b7f5d83ed22efa1a69b343b3d129b06549",
+      "linhas": 30000,
+      "origem": "simulacao_fonte_publica",
+      "posicao_fonte": [
+        0,
+        30000
+      ],
+      "recebido_em": "2026-11-10T02:15:31Z",
+      "recebido_no_ciclo": null,
+      "status": "recebido"
+    }
+  ]
+}

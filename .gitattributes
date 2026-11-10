@@ -1,0 +1,11 @@
+# Lotes de dados são imutáveis e versionados por SHA-256: o Git não pode
+# converter fim de linha (CRLF/LF), senão o hash muda entre Windows e Linux.
+data/raw/*.csv -text
+data/registro_lotes.json -text
+
+# Estado persistente do MLflow e modelos serializados
+mlruns/** -text
+*.db binary
+*.joblib binary
+*.pkl binary
+*.gz binary

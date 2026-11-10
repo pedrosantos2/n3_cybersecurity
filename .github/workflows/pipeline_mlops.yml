@@ -1,0 +1,147 @@
+# =============================================================================
+# Workflow ÚNICO do pipeline MLOps (Trabalho N3 - Análise Preditiva)
+#
+# Uma execução agendada aciona TODO o fluxo, em sequência, num único job:
+#   agendamento -> entrada/versionamento de dados -> ETL -> 3 métodos de
+#   seleção + votação -> treino dos modelos A e B -> eleição -> MLflow ->
+#   regra de promoção -> previsões com o vigente + evidências.
+#
+# Estado persistente: o próprio repositório Git. O workflow lê do checkout o
+# manifesto e o modelo vigente (models/), o histórico do MLflow (mlruns/) e o
+# registro de lotes (data/), e ao final faz commit do novo estado. Nada depende
+# de arquivos de runners anteriores. O pacote completo do ciclo também é
+# publicado como artifact baixável.
+# =============================================================================
+name: pipeline-mlops
+
+on:
+  schedule:
+    # Todo dia às 09:17 UTC (06:17 em Brasília). Minuto "quebrado" para fugir
+    # do pico de início de hora, quando o GitHub mais atrasa agendamentos.
+    - cron: "17 9 * * *"
+  workflow_dispatch:
+    inputs:
+      motivo:
+        description: "Motivo da execução manual (depuração)"
+        required: false
+        default: "depuracao"
+
+permissions:
+  contents: write   # commit do estado persistente (dados, modelos, MLflow, evidências)
+  issues: write     # notificação: abre issue quando o monitoramento de drift alerta (critério 10)
+
+concurrency:
+  group: pipeline-mlops        # nunca dois ciclos ao mesmo tempo
+  cancel-in-progress: false
+
+env:
+  PYTHONUTF8: "1"
+  MLFLOW_TRACKING_URI: "http://127.0.0.1:5000"
+  N3_CRON: "17 9 * * *"
+
+jobs:
+  ciclo:
+    name: Ciclo MLOps (notebooks 01 -> 05)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: "[1] Checkout com o estado persistente (modelo vigente, MLflow, lotes)"
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Preparar Python
+        uses: actions/setup-python@v6
+        with:
+          python-version-file: ".python-version"
+          cache: pip
+
+      - name: Instalar requirements
+        run: python -m pip install -r requirements.txt
+
+      - name: Cache da fonte pública (Kaggle)
+        uses: actions/cache@v5
+        with:
+          path: data/fonte
+          key: fonte-kaggle-malicious-urls-v1
+
+      - name: "[1] Abrir ciclo (cycle_id + gatilho)"
+        run: python -m src.ciclo novo --gatilho "${{ github.event_name }}"
+
+      - name: Subir servidor MLflow (SQLite + artefatos em mlruns/)
+        run: |
+          mkdir -p mlruns
+          nohup python -m mlflow server \
+            --backend-store-uri sqlite:///mlruns/mlflow.db \
+            --artifacts-destination mlruns/artifacts \
+            --host 127.0.0.1 --port 5000 --workers 1 > mlruns/servidor.log 2>&1 &
+          for i in $(seq 1 60); do curl -sf http://127.0.0.1:5000/health > /dev/null && break; sleep 2; done
+          curl -sf http://127.0.0.1:5000/health
+
+      - name: "[2-3] Notebook 01 - entrada de dados, ETL, atributos e drift"
+        run: >
+          jupyter nbconvert --to notebook --execute notebooks/01_etl.ipynb
+          --output-dir "$EVID_DIR/notebooks" --output 01_executado.ipynb
+          --ExecutePreprocessor.timeout=1800
+
+      - name: "[4-5] Notebook 02 - três métodos de seleção e votação"
+        run: >
+          jupyter nbconvert --to notebook --execute notebooks/02_votacao_features.ipynb
+          --output-dir "$EVID_DIR/notebooks" --output 02_executado.ipynb
+          --ExecutePreprocessor.timeout=1800
+
+      - name: "[6] Notebook 03 - treino dos modelos A e B"
+        run: >
+          jupyter nbconvert --to notebook --execute notebooks/03_treino_competicao.ipynb
+          --output-dir "$EVID_DIR/notebooks" --output 03_executado.ipynb
+          --ExecutePreprocessor.timeout=1800
+
+      - name: "[7-9] Notebook 04 - eleição do vencedor, MLflow e regra de promoção"
+        run: >
+          jupyter nbconvert --to notebook --execute notebooks/04_selecao_promocao.ipynb
+          --output-dir "$EVID_DIR/notebooks" --output 04_executado.ipynb
+          --ExecutePreprocessor.timeout=1800
+
+      - name: "[10] Notebook 05 - previsões com o vigente e teste integrado"
+        run: >
+          jupyter nbconvert --to notebook --execute notebooks/05_previsoes.ipynb
+          --output-dir "$EVID_DIR/notebooks" --output 05_executado.ipynb
+          --ExecutePreprocessor.timeout=1800
+
+      - name: Notificações (drift) e resumo do ciclo
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python -m src.monitoramento alertar
+          python -m src.relatorio resumo
+
+      - name: Relatório técnico (PDF) atualizado com as evidências
+        run: python -m src.relatorio pdf
+
+      - name: Persistir o estado do ciclo no repositório
+        run: |
+          DECISAO=$(python -c "import json; print(json.load(open('models/modelo_vigente.json', encoding='utf-8'))['ultima_decisao']['decisao'])")
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/raw data/registro_lotes.json models evidencias mlruns reports
+          git commit -m "ciclo ${CYCLE_ID}: ${DECISAO} (gatilho ${{ github.event_name }}) [skip ci]"
+          git pull --rebase origin "${{ github.ref_name }}"
+          git push origin "HEAD:${{ github.ref_name }}"
+
+      - name: Marcar ciclo como falho (nenhuma promoção é persistida)
+        if: failure()
+        run: python -m src.ciclo falhou --motivo "falha no workflow (run ${{ github.run_id }})" || true
+
+      - name: Publicar pacote completo do ciclo (artifact baixável)
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mlops-ciclo-${{ github.run_number }}-${{ github.run_attempt }}
+          path: |
+            evidencias/
+            models/
+            mlruns/
+            reports/
+            data/registro_lotes.json
+          retention-days: 90
+          if-no-files-found: warn

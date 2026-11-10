@@ -1,0 +1,33 @@
+# Ambientes virtuais e caches
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+
+# Segredos (nunca versionar tokens/senhas)
+.env
+*.env
+kaggle.json
+.kaggle/
+
+# Cópia local da fonte pública (baixada automaticamente do Kaggle)
+data/fonte/
+
+# Dados intermediários regenerados a cada ciclo
+data/processed/*
+!data/processed/.gitkeep
+
+# Log do servidor MLflow local
+mlruns/servidor.log
+
+# Notebooks executados fora da pasta de evidências
+notebooks/*_executado.ipynb
+
+# Sistema operacional / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

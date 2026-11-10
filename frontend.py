@@ -17,27 +17,35 @@ API_URL = "http://localhost:8000"
 # Título e descrição
 st.title("🔒 Detector de URLs Maliciosas")
 st.markdown("""
-Este aplicativo utiliza Machine Learning (XGBoost) para classificar URLs em:
+Este aplicativo usa o **modelo vigente** do pipeline MLOps (eleito e promovido automaticamente a cada ciclo) para classificar URLs em:
 - **Benign**: URLs seguras
 - **Phishing**: Tentativas de roubo de informações
 - **Malware**: URLs que distribuem software malicioso
 - **Defacement**: URLs comprometidas/alteradas
 """)
 
+if "url_input" not in st.session_state:
+    st.session_state["url_input"] = ""
+
 # Sidebar com informações
 with st.sidebar:
-    st.header("ℹ️ Sobre")
-    st.info("""
-    **Modelo:** XGBoost Multiclass
-    
-    **Features extraídas:**
-    - Comprimento da URL
-    - Número de caracteres especiais
-    - Presença de HTTPS
-    - TLD suspeita
-    - E mais 15+ features
-    """)
-    
+    st.header("ℹ️ Modelo vigente")
+    try:
+        info = requests.get(f"{API_URL}/modelo", timeout=3).json()
+        v = info["vigente"]
+        st.info(
+            f"**Versão:** {v['versao']} ({v['algoritmo']})\n\n"
+            f"**Promovido no ciclo:** `{v['cycle_id']}`\n\n"
+            f"**data_version:** `{v['data_version']}`\n\n"
+            f"**{v['metrica_principal']} (validação):** {v['valor_metrica_validacao']:.4f}\n\n"
+            f"**Features eleitas:** {len(v['features'])}"
+        )
+        dec = info.get("ultima_decisao") or {}
+        if dec:
+            st.caption(f"Última decisão ({dec.get('cycle_id')}): **{dec.get('decisao')}** — {dec.get('motivo')}")
+    except Exception:
+        st.warning("Informações do modelo indisponíveis.")
+
     # Status da API
     st.header("🔌 Status da API")
     try:
@@ -58,11 +66,16 @@ st.header("🔍 Analisar URL")
 
 col1, col2 = st.columns([3, 1])
 
+def _usar_exemplo(url: str) -> None:
+    st.session_state["url_input"] = url
+
+
 with col1:
     url_input = st.text_input(
         "Digite a URL para análise:",
         placeholder="https://exemplo.com",
-        help="Cole aqui a URL que deseja verificar"
+        help="Cole aqui a URL que deseja verificar",
+        key="url_input",
     )
 
 with col2:
@@ -70,29 +83,14 @@ with col2:
     st.write("")
     analyze_button = st.button("🚀 Analisar", type="primary", use_container_width=True)
 
-# Exemplos de URLs
-with st.expander("📋 URLs de Exemplo"):
+# Exemplos reais do conjunto de teste do dataset (preenchem o campo via session_state)
+with st.expander("📋 URLs de Exemplo (do conjunto de teste)"):
     col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        if st.button("🟢 URL Segura", use_container_width=True):
-            url_input = "https://www.google.com"
-            st.rerun()
-    
-    with col2:
-        if st.button("🔴 Phishing", use_container_width=True):
-            url_input = "http://paypal-verify-account.tk/login"
-            st.rerun()
-    
-    with col3:
-        if st.button("🔴 Malware", use_container_width=True):
-            url_input = "http://192.168.1.1/download.exe"
-            st.rerun()
-    
-    with col4:
-        if st.button("🔴 Defacement", use_container_width=True):
-            url_input = "http://hacked-site.ru/index.html"
-            st.rerun()
+    col1.button("🟢 Benign", use_container_width=True, on_click=_usar_exemplo, args=("youtube.com/watch?v=lDnPb7njHUQ",))
+    col2.button("🔴 Phishing", use_container_width=True, on_click=_usar_exemplo, args=("http://drive-google-com.fanalav.com/5e858109c170e2415e660a1e0421acdc/",))
+    col3.button("🔴 Malware", use_container_width=True, on_click=_usar_exemplo, args=("http://167.114.129.9/bins/dark.arm6",))
+    col4.button("🔴 Defacement", use_container_width=True, on_click=_usar_exemplo, args=("http://www.ekino-neureut.de/index.php?option=com_xmap&sitemap=1&Itemid=28",))
+    st.caption("O modelo usa apenas o texto da URL. Domínios curtos sem caminho (ex.: google.com) são ambíguos nesta base e podem ser classificados de forma errada.")
 
 # Processamento da análise
 if analyze_button and url_input:
@@ -238,7 +236,7 @@ elif analyze_button and not url_input:
 st.divider()
 st.markdown("""
 <div style="text-align: center; color: gray; padding: 20px;">
-    <p>Desenvolvido com ❤️ usando Streamlit + FastAPI + XGBoost</p>
+    <p>Desenvolvido com ❤️ usando Streamlit + FastAPI + pipeline MLOps (scikit-learn, XGBoost, MLflow)</p>
     <p>Para mais informações, consulte a documentação da API em <code>http://localhost:8000/docs</code></p>
 </div>
 """, unsafe_allow_html=True)

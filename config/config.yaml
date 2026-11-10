@@ -1,0 +1,186 @@
+# =============================================================================
+# Configuração única do pipeline MLOps - Trabalho N3 (Análise Preditiva)
+# Detecção multiclasse de URLs maliciosas
+#
+# TODAS as regras de decisão (métrica, direção, votação, promoção) são definidas
+# AQUI, antes de qualquer treinamento. Os notebooks apenas leem estes valores e
+# os registram no MLflow a cada ciclo, o que torna a decisão auditável.
+# =============================================================================
+
+projeto:
+  nome: "Detecção de URLs maliciosas com pipeline MLOps agendado"
+  disciplina: "Análise Preditiva - Trabalho N3"
+  instituicao: "Católica de Santa Catarina"
+  professor: "Prof. M. Sc. Rodrigo Hagstrom"
+  repositorio: "https://github.com/pedrosantos2/n3_cybersecurity"
+  # Preencha com os nomes completos de todos os integrantes (até 5).
+  integrantes:
+    - "Pedro Henrique Santos"
+
+# -----------------------------------------------------------------------------
+# Etapa 1 - Problema e dados
+# -----------------------------------------------------------------------------
+problema:
+  tipo: classificacao_multiclasse
+  unidade_observacao: "uma URL (string) coletada de listas públicas de ameaças e de sites legítimos"
+  variavel_alvo: type
+  descricao: >
+    Classificar cada URL em benign, defacement, phishing ou malware a partir de
+    atributos léxicos extraídos exclusivamente do texto da URL (sem acessar a
+    página), permitindo triagem rápida e barata de links suspeitos.
+
+dados:
+  fonte:
+    nome: "Malicious URLs dataset (Kaggle)"
+    kaggle_dataset: "sid321axn/malicious-urls-dataset"
+    url: "https://www.kaggle.com/datasets/sid321axn/malicious-urls-dataset"
+    arquivo: "malicious_phish.csv"
+    licenca: "CC0: Public Domain (conforme a página do dataset no Kaggle)"
+    # Cópia local da fonte (não versionada; baixada automaticamente via kagglehub).
+    cache: "data/fonte/malicious_phish.csv"
+  coluna_url: url
+  coluna_alvo: type
+  classes: [benign, defacement, phishing, malware]
+  dir_raw: "data/raw"
+  dir_processed: "data/processed"
+  # Registro versionado dos lotes já incorporados (hash SHA-256 de cada arquivo).
+  registro_lotes: "data/registro_lotes.json"
+
+  # Forma de chegada de novos registros (definida antes do treinamento):
+  # a fonte pública é embaralhada com semente fixa e "entregue" em lotes.
+  # O lote inicial já está versionado em data/raw/; a cada ciclo agendado,
+  # se não houver arquivo novo em data/raw/, o próximo lote é materializado.
+  chegada:
+    simular_chegada: true
+    semente: 2026
+    tamanho_lote_inicial: 30000
+    tamanho_lote_novo: 5000
+    lotes_por_ciclo: 1
+
+  # Regras de qualidade/limpeza aplicadas no ETL (notebook 01).
+  qualidade:
+    comprimento_maximo_url: 2048        # acima disso a URL é considerada corrompida
+    proporcao_minima_validos_lote: 0.90 # lote com menos que isso de linhas válidas é rejeitado
+    remover_conflitos_rotulo: true      # mesma URL com rótulos diferentes é ambígua
+
+# -----------------------------------------------------------------------------
+# Particionamento e protocolo de avaliação (definidos ANTES do treinamento)
+# -----------------------------------------------------------------------------
+particionamento:
+  # Partição determinística por hash da URL normalizada: a mesma URL cai sempre
+  # na mesma partição em todos os ciclos, e os registros novos são distribuídos
+  # sem que o teste ou a validação "vazem" para o treino em ciclos futuros.
+  metodo: hash_url
+  sal: "n3-analise-preditiva"
+  proporcao_teste: 0.15       # reservado à avaliação final (nunca usado em decisões)
+  proporcao_validacao: 0.15   # holdout de promoção (desafiante x vigente)
+  # restante (70%) = treino; dentro dele, validação cruzada estratificada
+
+avaliacao:
+  metrica_principal: f1_macro
+  direcao: maximizar
+  justificativa: >
+    As classes são desbalanceadas (benign é maioria). A F1 macro dá o mesmo peso
+    a cada classe e penaliza modelos que ignoram classes minoritárias como
+    malware, que são justamente as de maior custo de erro.
+  metricas_secundarias: [accuracy, balanced_accuracy, precision_macro, recall_macro, log_loss]
+  cv_folds: 5
+  semente: 42
+
+# -----------------------------------------------------------------------------
+# Pré-processamento (ajustado SOMENTE com dados de treino, via ColumnTransformer)
+# -----------------------------------------------------------------------------
+preprocessamento:
+  recorte_quantil_inferior: 0.001   # tratamento de outliers (winsorização)
+  recorte_quantil_superior: 0.999
+  onehot_min_frequencia: 0.005      # TLDs raros vão para a categoria "infrequente"
+
+# -----------------------------------------------------------------------------
+# Etapa 3 - Três métodos de seleção e regra de votação (definida a priori)
+# -----------------------------------------------------------------------------
+votacao:
+  metodo: "maioria_2_de_3"
+  # Calibrado no desenvolvimento só com CV no treino do lote inicial: top-12/20
+  # descartava atributos raros porém decisivos para classes minoritárias
+  # (F1 macro do XGBoost 0,75 com 17 features x 0,80 com top-30).
+  top_k: 30               # cada método elege suas 30 melhores features (de ~56 colunas)
+  votos_minimos: 2        # eleita se aprovada por pelo menos 2 dos 3 métodos
+  min_features: 20        # se a maioria eleger menos, completa por rank médio
+  max_features: 36        # se eleger mais, corta pelos piores rank médio
+  desempate: "rank_medio" # menor rank médio entre os 3 métodos; depois ordem alfabética
+  amostra_maxima: 15000   # amostra estratificada para limitar custo de MI/RFE
+  metodos:
+    selectkbest:
+      score_func: mutual_info_classif
+    random_forest:
+      n_estimators: 150
+      max_depth: 12
+    rfe:
+      estimador: logistic_regression
+      step: 1
+
+# -----------------------------------------------------------------------------
+# Etapa 4 - Dois algoritmos que disputam o modelo preditivo
+# -----------------------------------------------------------------------------
+modelos:
+  # Pesos balanceados por classe (class_weight / sample_weight). Na CV de
+  # desenvolvimento (só treino do lote inicial), sem balanceamento o recall de
+  # phishing ficava em ~0,31 (XGBoost) e ~0,18 (RF); com balanceamento sobe para
+  # ~0,67/0,74 com F1 macro equivalente (XGB 0,747 x 0,752) ou melhor (RF 0,730 x 0,693).
+  balancear_classes: true
+  modelo_a:
+    nome: "random_forest"
+    algoritmo: random_forest
+    # Tamanho limitado (max_leaf_nodes) para que o modelo serializado caiba
+    # confortavelmente no histórico versionado a cada ciclo.
+    params:
+      n_estimators: 100
+      max_leaf_nodes: 256
+      min_samples_leaf: 2
+      max_features: sqrt
+  modelo_b:
+    nome: "xgboost"
+    algoritmo: xgboost
+    params:
+      n_estimators: 200
+      max_depth: 6
+      learning_rate: 0.15
+      subsample: 0.8
+      colsample_bytree: 0.8
+
+# -----------------------------------------------------------------------------
+# Etapa 5 - Eleição do vencedor e regra de promoção (definida a priori)
+# -----------------------------------------------------------------------------
+eleicao:
+  criterio: "media_cv_metrica_principal"
+  tolerancia_empate: 0.0005   # diferença menor que isso = empate -> menor desvio-padrão vence
+promocao:
+  conjunto_comparacao: validacao
+  limiar_melhoria: 0.002      # desafiante precisa superar o vigente em >= 0,002 de F1 macro
+  # Pisos de salvaguarda (não são metas): barram modelos degenerados, p.ex. um
+  # treino que só prevê a classe majoritária (F1 macro ~0,20) ou ignora uma classe.
+  metrica_minima: 0.70
+  recall_minimo_por_classe: 0.50
+
+# -----------------------------------------------------------------------------
+# Etapa 6 - MLflow
+# -----------------------------------------------------------------------------
+mlflow:
+  experimento: "n3-url-maliciosa"
+  modelo_registrado: "url-maliciosa-classificador"
+  alias_vigente: "vigente"
+  backend_store_uri: "sqlite:///mlruns/mlflow.db"
+  artifacts_destination: "mlruns/artifacts"
+  host: "127.0.0.1"
+  porta: 5000
+
+# -----------------------------------------------------------------------------
+# Critério 10 - Recurso adicional: monitoramento de drift com alerta
+# -----------------------------------------------------------------------------
+monitoramento:
+  habilitado: true
+  bins: 10
+  psi_atencao: 0.10
+  psi_alerta: 0.25
+  queda_f1_alerta: 0.03       # queda da F1 do vigente no lote novo vs. validação
+  abrir_issue_em_alerta: true # no GitHub Actions, abre issue quando houver alerta
