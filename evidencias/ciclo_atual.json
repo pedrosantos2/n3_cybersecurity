@@ -1,0 +1,121 @@
+{
+  "cycle_id": "c0001-20261119T181544Z",
+  "sequencial": 1,
+  "iniciado_em": "2026-11-19T18:15:44Z",
+  "gatilho": "schedule",
+  "github": {
+    "evento": "schedule",
+    "run_id": "44585677269",
+    "run_attempt": "1",
+    "run_url": "https://github.com/pedrosantos2/n3_cybersecurity/actions/runs/44585677269",
+    "workflow": "pipeline-mlops",
+    "ref": "refs/heads/main",
+    "sha": "c72d9c10d43c42d711b759a530cf669c65973b83",
+    "agendamento_cron": "17 9 * * *"
+  },
+  "git_commit": "c72d9c10d43c42d711b759a530cf669c65973b83",
+  "data_version": "dv001-98e802be",
+  "mlflow_run_pai": "454a8ff5df6943b68a14b2b9095b591c",
+  "status": "concluido",
+  "dir_evidencias": "evidencias/c0001-20261119T181544Z",
+  "etapas": {
+    "01_etl": {
+      "concluida_em": "2026-11-19T18:16:04Z",
+      "cycle_id": "c0001-20261119T181544Z",
+      "data_version": "dv001-98e802be",
+      "run_id": "96d8518a7caa46ee83379c814e0b0201",
+      "registros": 29875,
+      "registros_novos": 29875,
+      "lotes_novos": [
+        "lote_0001"
+      ],
+      "particoes": {
+        "treino": 20990,
+        "teste": 4483,
+        "validacao": 4402
+      }
+    },
+    "02_votacao": {
+      "concluida_em": "2026-11-19T18:25:25Z",
+      "cycle_id": "c0001-20261119T181544Z",
+      "data_version": "dv001-98e802be",
+      "run_id": "39d5c725352f433189f4cfad04767fe0",
+      "features_eleitas": [
+        "kw_cms",
+        "path_length",
+        "num_letters",
+        "num_path_tokens",
+        "tld_com",
+        "num_slash",
+        "query_length",
+        "path_depth",
+        "has_exec_extension",
+        "has_ip",
+        "has_query",
+        "num_hyphen",
+        "num_params",
+        "ratio_digits",
+        "ratio_special",
+        "digits_in_host",
+        "num_equal",
+        "ratio_letters",
+        "url_length",
+        "num_digits",
+        "num_special",
+        "kw_malware",
+        "entropy",
+        "longest_token",
+        "num_question",
+        "num_ampersand",
+        "num_dots",
+        "ext_php",
+        "num_suspicious_words",
+        "tld_ip"
+      ]
+    },
+    "03_treino": {
+      "concluida_em": "2026-11-19T18:25:47Z",
+      "cycle_id": "c0001-20261119T181544Z",
+      "data_version": "dv001-98e802be",
+      "run_ids": {
+        "modelo_a": "7e9e314d59c949748fb45ee57f5e108d",
+        "modelo_b": "8cd9e082465447a780d5f3d17f404dee"
+      },
+      "algoritmos": {
+        "modelo_a": "random_forest",
+        "modelo_b": "xgboost"
+      }
+    },
+    "04_promocao": {
+      "concluida_em": "2026-11-19T18:25:55Z",
+      "cycle_id": "c0001-20261119T181544Z",
+      "data_version": "dv001-98e802be",
+      "run_id": "10d30de8e6fd4aed9852b76a7726342e",
+      "decisao": "promover",
+      "versao_vigente": "v0001"
+    },
+    "05_previsoes": {
+      "concluida_em": "2026-11-19T18:26:02Z",
+      "cycle_id": "c0001-20261119T181544Z",
+      "data_version": "dv001-98e802be",
+      "run_id": "29c0482c7bcd4f89937b83cbc7695e8a",
+      "metricas_teste": {
+        "f1_macro": 0.7544706490082873,
+        "accuracy": 0.7561900513049298,
+        "balanced_accuracy": 0.7887795129105434,
+        "precision_macro": 0.7417986976840736,
+        "recall_macro": 0.7887795129105434,
+        "log_loss": 0.5312274694442749,
+        "f1_benign": 0.8134964775676677,
+        "recall_benign": 0.7427217332430602,
+        "f1_defacement": 0.8063354931605472,
+        "recall_defacement": 0.8588957055214724,
+        "f1_phishing": 0.5129650507328072,
+        "recall_phishing": 0.6791044776119403,
+        "f1_malware": 0.8850855745721271,
+        "recall_malware": 0.8743961352657005
+      }
+    }
+  },
+  "concluido_em": "2026-11-19T18:26:02Z"
+}

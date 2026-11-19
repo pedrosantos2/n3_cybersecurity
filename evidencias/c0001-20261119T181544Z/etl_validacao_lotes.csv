@@ -1,0 +1,2 @@
+lote,linhas,proporcao_validas,duplicadas_no_lote,aprovado
+data/raw/lote_0001.csv,30000,1.0,125,True

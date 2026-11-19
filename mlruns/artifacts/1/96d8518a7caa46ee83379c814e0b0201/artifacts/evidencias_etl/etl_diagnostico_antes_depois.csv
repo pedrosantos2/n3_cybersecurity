@@ -1,0 +1,15 @@
+,antes,depois
+linhas,30000.0,29875.0
+url_ausente,0.0,0.0
+alvo_ausente,0.0,0.0
+url_vazia,0.0,0.0
+espacos_nas_bordas,0.0,0.0
+rotulo_invalido,0.0,0.0
+linhas_duplicadas,125.0,0.0
+urls_repetidas,125.0,0.0
+urls_com_rotulos_conflitantes,0.0,0.0
+comprimento_mediano,47.0,47.0
+comprimento_p99,230.0,230.0
+comprimento_maximo,1189.0,1189.0
+outliers_comprimento_iqr3,390.0,390.0
+acima_comprimento_maximo,0.0,0.0

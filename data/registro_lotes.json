@@ -13,7 +13,10 @@
       ],
       "recebido_em": "2026-11-10T02:15:31Z",
       "recebido_no_ciclo": null,
-      "status": "recebido"
+      "status": "incorporado",
+      "incorporado_no_ciclo": "c0001-20261119T181544Z",
+      "incorporado_em": "2026-11-19T18:16:00Z"
     }
-  ]
+  ],
+  "data_version_atual": "dv001-98e802be"
 }

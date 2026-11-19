@@ -1,0 +1,2 @@
+cycle_id,data_version,gatilho,lotes_incorporados,n_features,features_entraram,features_sairam,algoritmo_vencedor,cv_vencedor,metrica_desafiante_validacao,metrica_vigente_validacao,delta,decisao,versao_vigente_apos
+c0001-20261119T181544Z,dv001-98e802be,schedule,lote_0001,30,(primeiro ciclo),,xgboost,0.750604,0.749259,,,promover,v0001
