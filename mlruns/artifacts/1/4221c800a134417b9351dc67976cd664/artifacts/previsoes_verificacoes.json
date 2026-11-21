@@ -1,0 +1,50 @@
+{
+  "cycle_id": "c0003-20261121T164655Z",
+  "metricas_teste": {
+    "f1_macro": 0.7677710970189845,
+    "accuracy": 0.7689730273077567,
+    "balanced_accuracy": 0.7973878822227256,
+    "precision_macro": 0.7584948678226946,
+    "recall_macro": 0.7973878822227256,
+    "log_loss": 0.5121760368347168,
+    "f1_benign": 0.8248044999314035,
+    "recall_benign": 0.7592826471331144,
+    "f1_defacement": 0.8128342245989305,
+    "recall_defacement": 0.8607021517553793,
+    "f1_phishing": 0.5232660228270413,
+    "recall_phishing": 0.6858457997698504,
+    "f1_malware": 0.9101796407185628,
+    "recall_malware": 0.8837209302325582
+  },
+  "verificacoes": [
+    {
+      "verificacao": "votação refeita neste ciclo",
+      "ok": true
+    },
+    {
+      "verificacao": "dois algoritmos distintos treinados neste ciclo",
+      "ok": true
+    },
+    {
+      "verificacao": "decisão automática registrada (promover/manter)",
+      "ok": true
+    },
+    {
+      "verificacao": "mesmo cycle_id/data_version em todas as etapas",
+      "ok": true
+    },
+    {
+      "verificacao": "features do bundle = features do manifesto",
+      "ok": true
+    },
+    {
+      "verificacao": "MLflow (alias vigente) e bundle prevêem igual",
+      "ok": true
+    },
+    {
+      "verificacao": "previsões geradas para registros não usados na escolha",
+      "ok": true
+    }
+  ],
+  "vigente": "v0002"
+}

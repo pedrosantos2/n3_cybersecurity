@@ -1,0 +1,122 @@
+{
+  "cycle_id": "c0003-20261121T164655Z",
+  "data_version": "dv003-87c663bd",
+  "eleicao": {
+    "vencedor": "modelo_b",
+    "algoritmo_vencedor": "xgboost",
+    "perdedor": "modelo_a",
+    "algoritmo_perdedor": "random_forest",
+    "media_vencedor": 0.7552219519608083,
+    "media_perdedor": 0.7321233150514106,
+    "desvio_vencedor": 0.00728261247877565,
+    "motivo": "maior média de f1_macro na validação cruzada (Δ=0.0231)"
+  },
+  "decisao": {
+    "decisao": "manter",
+    "motivo": "supera_vigente: Δ=-0.0016 (desafiante 0.7628 x vigente 0.7645); limiar 0.002",
+    "metrica": "f1_macro",
+    "direcao": "maximizar",
+    "valor_desafiante": 0.762830264754546,
+    "valor_vigente": 0.7644678391263541,
+    "delta": -0.0016375743718081148,
+    "limiar": 0.002,
+    "checagens": [
+      {
+        "regra": "integridade_cycle_id",
+        "ok": true,
+        "detalhe": "votação, treinos e decisão com o mesmo cycle_id"
+      },
+      {
+        "regra": "integridade_data_version",
+        "ok": true,
+        "detalhe": "data_version dv003-87c663bd em todas as etapas e no registro de lotes"
+      },
+      {
+        "regra": "integridade_dois_candidatos",
+        "ok": true,
+        "detalhe": "runs de treino no MLflow para o ciclo: ['random_forest', 'xgboost']"
+      },
+      {
+        "regra": "integridade_mesmas_features",
+        "ok": true,
+        "detalhe": "modelos A e B usam exatamente as features eleitas no ciclo"
+      },
+      {
+        "regra": "integridade_vigente",
+        "ok": true,
+        "detalhe": "vigente v0002 carregado e hash conferido"
+      },
+      {
+        "regra": "metrica_finita",
+        "ok": true,
+        "detalhe": "f1_macro do desafiante = 0.762830264754546"
+      },
+      {
+        "regra": "piso_metrica_principal",
+        "ok": true,
+        "detalhe": "f1_macro=0.7628 vs piso 0.7"
+      },
+      {
+        "regra": "recall_minimo_por_classe",
+        "ok": true,
+        "detalhe": "menor recall por classe=0.7220 vs mínimo 0.5"
+      },
+      {
+        "regra": "supera_vigente",
+        "ok": false,
+        "detalhe": "Δ=-0.0016 (desafiante 0.7628 x vigente 0.7645); limiar 0.002"
+      }
+    ],
+    "run_id_promocao": "84bd9c5c67ac419280ed1f2e1ec7d62a"
+  },
+  "metricas_validacao": {
+    "desafiante": {
+      "f1_macro": 0.762830264754546,
+      "accuracy": 0.7652454560896892,
+      "balanced_accuracy": 0.8008890567321327,
+      "precision_macro": 0.7516509231407559,
+      "recall_macro": 0.8008890567321327,
+      "log_loss": 0.511519193649292,
+      "f1_benign": 0.8171150543789353,
+      "recall_benign": 0.7394457394457394,
+      "f1_defacement": 0.8241869918699187,
+      "recall_defacement": 0.8892543859649122,
+      "f1_phishing": 0.5323491098567087,
+      "recall_phishing": 0.7220259128386337,
+      "f1_malware": 0.8776699029126214,
+      "recall_malware": 0.8528301886792453
+    },
+    "perdedor": {
+      "f1_macro": 0.7323904577089565,
+      "accuracy": 0.714795311703754,
+      "balanced_accuracy": 0.7777417996724394,
+      "precision_macro": 0.7358081832208312,
+      "recall_macro": 0.7777417996724394,
+      "log_loss": 0.6508558585640786,
+      "f1_benign": 0.7689773918251235,
+      "recall_benign": 0.6651126651126651,
+      "f1_defacement": 0.7874097007223942,
+      "recall_defacement": 0.8366228070175439,
+      "f1_phishing": 0.4939668174962293,
+      "recall_phishing": 0.7714958775029447,
+      "f1_malware": 0.8792079207920792,
+      "recall_malware": 0.8377358490566038
+    },
+    "vigente": {
+      "f1_macro": 0.7644678391263541,
+      "accuracy": 0.7688126380159673,
+      "balanced_accuracy": 0.798406111683817,
+      "precision_macro": 0.7528012972007393,
+      "recall_macro": 0.798406111683817,
+      "log_loss": 0.5115195512771606,
+      "f1_benign": 0.8216308040770102,
+      "recall_benign": 0.7516187516187516,
+      "f1_defacement": 0.8302277432712215,
+      "recall_defacement": 0.8793859649122807,
+      "f1_phishing": 0.525243578387954,
+      "recall_phishing": 0.6984687868080094,
+      "f1_malware": 0.8807692307692307,
+      "recall_malware": 0.8641509433962264
+    }
+  }
+}
