@@ -1,0 +1,137 @@
+{
+  "antes": {
+    "linhas": 45000,
+    "url_ausente": 0,
+    "alvo_ausente": 0,
+    "url_vazia": 0,
+    "espacos_nas_bordas": 0,
+    "rotulo_invalido": 0,
+    "linhas_duplicadas": 260,
+    "urls_repetidas": 260,
+    "urls_com_rotulos_conflitantes": 0,
+    "comprimento_mediano": 47.0,
+    "comprimento_p99": 231.0,
+    "comprimento_maximo": 1189,
+    "outliers_comprimento_iqr3": 597,
+    "acima_comprimento_maximo": 0,
+    "distribuicao_classes": {
+      "benign": 29483,
+      "defacement": 6702,
+      "phishing": 6573,
+      "malware": 2242
+    }
+  },
+  "depois": {
+    "linhas": 44740,
+    "url_ausente": 0,
+    "alvo_ausente": 0,
+    "url_vazia": 0,
+    "espacos_nas_bordas": 0,
+    "rotulo_invalido": 0,
+    "linhas_duplicadas": 0,
+    "urls_repetidas": 0,
+    "urls_com_rotulos_conflitantes": 0,
+    "comprimento_mediano": 47.0,
+    "comprimento_p99": 231.0,
+    "comprimento_maximo": 1189,
+    "outliers_comprimento_iqr3": 596,
+    "acima_comprimento_maximo": 0,
+    "distribuicao_classes": {
+      "benign": 29483,
+      "defacement": 6697,
+      "phishing": 6572,
+      "malware": 1988
+    }
+  },
+  "acoes": [
+    {
+      "acao": "remover_ausentes",
+      "removidos": 0,
+      "restantes": 45000,
+      "justificativa": "Sem URL ou sem rótulo não há como extrair atributos nem supervisionar."
+    },
+    {
+      "acao": "normalizar_e_remover_vazias",
+      "removidos": 0,
+      "restantes": 45000,
+      "justificativa": "Espaços nas bordas são ruído de coleta; URL vazia é inválida."
+    },
+    {
+      "acao": "remover_rotulos_invalidos",
+      "removidos": 0,
+      "restantes": 45000,
+      "justificativa": "Somente as classes previstas no problema: ['benign', 'defacement', 'phishing', 'malware']."
+    },
+    {
+      "acao": "remover_urls_corrompidas",
+      "removidos": 0,
+      "restantes": 45000,
+      "justificativa": "URLs acima de 2048 caracteres excedem limites práticos de navegadores/servidores e indicam registros concatenados. Demais outliers são mantidos (URLs longas são informativas) e tratados por winsorização ajustada no treino."
+    },
+    {
+      "acao": "remover_conflitos_de_rotulo",
+      "removidos": 0,
+      "restantes": 45000,
+      "justificativa": "A mesma URL com rótulos diferentes é inconsistente (rótulo não confiável)."
+    },
+    {
+      "acao": "remover_duplicadas",
+      "removidos": 260,
+      "restantes": 44740,
+      "justificativa": "Cada URL entra uma única vez; mantém a ocorrência do lote mais antigo."
+    }
+  ],
+  "particoes": {
+    "treino": 31399,
+    "teste": 6735,
+    "validacao": 6606
+  },
+  "particao_x_classe": {
+    "teste": {
+      "benign": 4472,
+      "defacement": 996,
+      "malware": 284,
+      "phishing": 983
+    },
+    "treino": {
+      "benign": 20670,
+      "defacement": 4680,
+      "malware": 1412,
+      "phishing": 4637
+    },
+    "validacao": {
+      "benign": 4341,
+      "defacement": 1021,
+      "malware": 292,
+      "phishing": 952
+    }
+  },
+  "vies_coleta": {
+    "benign": {
+      "com_esquema": 0.083,
+      "https": 0.005,
+      "www": 0.031,
+      "barra_final_dominio": 0.994
+    },
+    "defacement": {
+      "com_esquema": 1.0,
+      "https": 0.0,
+      "www": 0.706,
+      "barra_final_dominio": NaN
+    },
+    "malware": {
+      "com_esquema": 0.961,
+      "https": 0.234,
+      "www": 0.07,
+      "barra_final_dominio": 0.07
+    },
+    "phishing": {
+      "com_esquema": 0.273,
+      "https": 0.079,
+      "www": 0.388,
+      "barra_final_dominio": 0.08
+    }
+  },
+  "n_features_brutas": 39,
+  "n_colunas_transformadas": 56
+}
