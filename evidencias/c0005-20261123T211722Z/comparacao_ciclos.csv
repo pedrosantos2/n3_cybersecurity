@@ -1,0 +1,6 @@
+cycle_id,data_version,gatilho,lotes_incorporados,n_features,features_entraram,features_sairam,algoritmo_vencedor,cv_vencedor,metrica_desafiante_validacao,metrica_vigente_validacao,delta,decisao,versao_vigente_apos
+c0001-20261119T181544Z,dv001-98e802be,schedule,lote_0001,30,(primeiro ciclo),,xgboost,0.750604,0.749259,,,promover,v0001
+c0002-20261120T174720Z,dv002-ef484fad,schedule,lote_0002,30,host_length,num_question,xgboost,0.754562,0.768203,0.753174,0.01503,promover,v0002
+c0003-20261121T164655Z,dv003-87c663bd,schedule,lote_0003,31,num_question,,xgboost,0.755222,0.76283,0.764468,-0.001638,manter,v0002
+c0004-20261122T170836Z,dv004-e76b61ae,schedule,lote_0004,30,,has_exec_extension,xgboost,0.760097,0.761817,0.765063,-0.003246,manter,v0002
+c0005-20261123T211722Z,dv005-e930a6b0,schedule,lote_0005,29,has_exec_extension,"num_hyphen,num_suspicious_words",xgboost,0.763761,0.758789,0.764522,-0.005733,manter,v0002

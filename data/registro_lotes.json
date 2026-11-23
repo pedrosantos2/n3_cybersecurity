@@ -1,6 +1,6 @@
 {
   "versao_formato": 1,
-  "fonte_proxima_posicao": 45000,
+  "fonte_proxima_posicao": 50000,
   "lotes": [
     {
       "arquivo": "data/raw/lote_0001.csv",
@@ -61,7 +61,22 @@
       "status": "incorporado",
       "incorporado_no_ciclo": "c0004-20261122T170836Z",
       "incorporado_em": "2026-11-22T17:08:53Z"
+    },
+    {
+      "arquivo": "data/raw/lote_0005.csv",
+      "sha256": "547748d500f926451f80d9cd2084222a95b64154348d374c6124388e1459135b",
+      "linhas": 5000,
+      "origem": "simulacao_fonte_publica",
+      "posicao_fonte": [
+        45000,
+        50000
+      ],
+      "recebido_em": "2026-11-23T21:17:32Z",
+      "recebido_no_ciclo": "c0005-20261123T211722Z",
+      "status": "incorporado",
+      "incorporado_no_ciclo": "c0005-20261123T211722Z",
+      "incorporado_em": "2026-11-23T21:17:32Z"
     }
   ],
-  "data_version_atual": "dv004-e76b61ae"
+  "data_version_atual": "dv005-e930a6b0"
 }
