@@ -4,6 +4,14 @@
 
 **Católica de Santa Catarina · Análise Preditiva · Trabalho N3** — Projeto Integrador de MLOps: votação de features, competição de modelos e atualização automatizada.
 
+## Criadores
+
+- Pedro Santos
+- Jeziel Nogueira
+- Vinicius Fróes
+- João Witor
+- Santhiago Chapiewski
+
 Classificação multiclasse de URLs (`benign`, `defacement`, `phishing`, `malware`) a partir de atributos léxicos do texto da URL. Um **único workflow agendado** executa, a cada ciclo, todo o fluxo: entrada de dados novos → ETL → três métodos de seleção de features + votação → treino de dois algoritmos (Random Forest × XGBoost) → eleição do vencedor → registro no MLflow → regra de promoção → previsões com o modelo vigente.
 
 ```mermaid
