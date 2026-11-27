@@ -1,0 +1,62 @@
+artifact_path: mlflow-artifacts:/1/models/m-f6aa731f21994841af8ecb028189753b/artifacts
+flavors:
+  python_function:
+    code: code
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.14.10
+  sklearn:
+    code: code
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.9.1
+    skops_trusted_types: null
+is_signature_from_type_hint: false
+mlflow_version: 3.17.2
+model_id: m-f6aa731f21994841af8ecb028189753b
+model_size_bytes: 5085234
+model_uuid: m-f6aa731f21994841af8ecb028189753b
+prompts: null
+run_id: d3eb4e313d834f5f80a797cf27d4526b
+saved_input_example_info:
+  artifact_path: input_example.json
+  pandas_orient: split
+  serving_input_path: serving_input_example.json
+  type: dataframe
+signature:
+  inputs: '[{"type": "long", "name": "url_length", "required": true}, {"type": "long",
+    "name": "host_length", "required": true}, {"type": "long", "name": "path_length",
+    "required": true}, {"type": "long", "name": "query_length", "required": true},
+    {"type": "long", "name": "num_dots", "required": true}, {"type": "long", "name":
+    "num_slash", "required": true}, {"type": "long", "name": "num_hyphen", "required":
+    true}, {"type": "long", "name": "num_underscore", "required": true}, {"type":
+    "long", "name": "num_at", "required": true}, {"type": "long", "name": "num_question",
+    "required": true}, {"type": "long", "name": "num_equal", "required": true}, {"type":
+    "long", "name": "num_ampersand", "required": true}, {"type": "long", "name": "num_percent",
+    "required": true}, {"type": "long", "name": "num_digits", "required": true}, {"type":
+    "long", "name": "num_letters", "required": true}, {"type": "long", "name": "num_special",
+    "required": true}, {"type": "long", "name": "num_subdomains", "required": true},
+    {"type": "long", "name": "path_depth", "required": true}, {"type": "long", "name":
+    "num_params", "required": true}, {"type": "long", "name": "digits_in_host", "required":
+    true}, {"type": "long", "name": "longest_token", "required": true}, {"type": "long",
+    "name": "has_ip", "required": true}, {"type": "long", "name": "has_port", "required":
+    true}, {"type": "long", "name": "is_shortener", "required": true}, {"type": "long",
+    "name": "has_exec_extension", "required": true}, {"type": "long", "name": "num_suspicious_words",
+    "required": true}, {"type": "long", "name": "tld_suspicious", "required": true},
+    {"type": "double", "name": "ratio_digits", "required": true}, {"type": "double",
+    "name": "ratio_letters", "required": true}, {"type": "double", "name": "ratio_special",
+    "required": true}, {"type": "double", "name": "entropy", "required": true}, {"type":
+    "long", "name": "kw_cms", "required": true}, {"type": "long", "name": "kw_phishing",
+    "required": true}, {"type": "long", "name": "kw_malware", "required": true}, {"type":
+    "long", "name": "ext_php", "required": true}, {"type": "long", "name": "ext_html",
+    "required": true}, {"type": "long", "name": "has_query", "required": true}, {"type":
+    "long", "name": "num_path_tokens", "required": true}, {"type": "string", "name":
+    "tld", "required": true}]'
+  outputs: '[{"type": "long", "required": true}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2026-11-27 19:07:48.926945'

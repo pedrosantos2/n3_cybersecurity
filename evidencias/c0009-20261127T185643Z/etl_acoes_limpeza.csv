@@ -1,0 +1,7 @@
+acao,removidos,restantes,justificativa
+remover_ausentes,0,70000,Sem URL ou sem rótulo não há como extrair atributos nem supervisionar.
+normalizar_e_remover_vazias,0,70000,Espaços nas bordas são ruído de coleta; URL vazia é inválida.
+remover_rotulos_invalidos,0,70000,"Somente as classes previstas no problema: ['benign', 'defacement', 'phishing', 'malware']."
+remover_urls_corrompidas,0,70000,URLs acima de 2048 caracteres excedem limites práticos de navegadores/servidores e indicam registros concatenados. Demais outliers são mantidos (URLs longas são informativas) e tratados por winsorização ajustada no treino.
+remover_conflitos_de_rotulo,0,70000,A mesma URL com rótulos diferentes é inconsistente (rótulo não confiável).
+remover_duplicadas,516,69484,Cada URL entra uma única vez; mantém a ocorrência do lote mais antigo.

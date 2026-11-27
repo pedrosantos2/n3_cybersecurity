@@ -1,0 +1,22 @@
+{
+  "cycle_id": "c0009-20261127T185643Z",
+  "sequencial": 9,
+  "iniciado_em": "2026-11-27T18:56:43Z",
+  "gatilho": "schedule",
+  "github": {
+    "evento": "schedule",
+    "run_id": "46052988345",
+    "run_attempt": "1",
+    "run_url": "https://github.com/pedrosantos2/n3_cybersecurity/actions/runs/46052988345",
+    "workflow": "pipeline-mlops",
+    "ref": "refs/heads/main",
+    "sha": "7b915ae4f6dd1c32e0dec37e33b3e12df6d149c4",
+    "agendamento_cron": "17 9 * * *"
+  },
+  "git_commit": "7b915ae4f6dd1c32e0dec37e33b3e12df6d149c4",
+  "data_version": "dv009-d59b5486",
+  "mlflow_run_pai": "19e7830ac5d54df1a78d9670863ad87c",
+  "status": "em_execucao",
+  "dir_evidencias": "evidencias/c0009-20261127T185643Z",
+  "etapas": {}
+}
